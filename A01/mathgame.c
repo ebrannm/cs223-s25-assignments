@@ -19,10 +19,7 @@ int main() {
     int lower = 1;
     int num1 = rand() % (upper - lower + 1) + lower;
     int num2 = rand() % (upper - lower + 1) + lower;
-    printf("%d", num1);
-    printf(" + ");
-    printf("%d", num2);
-    printf(" = ? ");
+    printf("%d %s %d %s", num1, "+", num2, "= ? ");
     int inputSum;
     scanf("%d", &inputSum);
     int realSum = num1 + num2;
@@ -35,10 +32,6 @@ int main() {
     }
     questNum = questNum + 1;
   }
-  printf("You answered ");
-  printf("%d", numCorrect); 
-  printf("/");
-  printf("%d", questNum);
-  printf(" correctly.");
+  printf("%s %d%s%d %s", "You answered", numCorrect, "/", questNum, "correctly.");
   return 0;
 }
