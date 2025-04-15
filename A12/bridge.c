@@ -1,3 +1,9 @@
+/*----------------------------------------------
+* Author: Elisabeth Brann 
+* Date: 04/18/25
+* Description: Safely simulates N tourists spending
+* the day in Mountainview Village.
+---------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
