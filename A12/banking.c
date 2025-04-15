@@ -1,7 +1,13 @@
+/*----------------------------------------------
+* Author: Elisabeth Brann 
+* Date: 04/18/25
+* Description: Handles a series of transfers between two accounts.
+---------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 #include <assert.h>
 
 struct account {
@@ -20,18 +26,33 @@ void *Transfer(void *args){
   struct account* fromAcct = data->fromAccount; 
   struct account* toAcct = data->toAccount; 
   float amt = data->amount;
-
+  struct account* first;
+  struct account* second;
+  if (fromAcct < toAcct) {
+    first = fromAcct;
+    second = toAcct;
+  }
+  else {
+    first = toAcct;
+    second = fromAcct;
+  }
   for (int i = 0; i < 1000; i++) {
-    pthread_mutex_lock(&(fromAcct->lock));
-    pthread_mutex_lock(&(toAcct->lock));
-
-    fromAcct->balance -= amt;
-    assert(fromAcct->balance >= 0);
-
-    toAcct->balance += amt;
-
-    pthread_mutex_unlock(&(fromAcct->lock));
-    pthread_mutex_unlock(&(toAcct->lock));
+    while (1) {
+      pthread_mutex_lock(&(first->lock));
+      pthread_mutex_lock(&(second->lock));
+      if (fromAcct->balance >= amt) {
+        fromAcct->balance -= amt;
+        assert(fromAcct->balance >= 0);
+        toAcct->balance += amt;
+        pthread_mutex_unlock(&(second->lock));
+        pthread_mutex_unlock(&(first->lock));
+        break;
+      }
+      pthread_mutex_unlock(&(second->lock));
+      pthread_mutex_unlock(&(first->lock));
+      //if it did not make the transfer, wait and try again
+      usleep(1000); 
+    }
   }
 
   return NULL;
